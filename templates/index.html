@@ -1,12 +1,30 @@
-{% extends 'base.html' %}{% block content %}
-<script>
-    function changeFunction() {
-      var img = document.querySelector('img');
-      img.src = "{{ url_for('tree') }}";
-      console.log("change fired")
-    }
-  </script>
-<h1 style = "text-align: center;">Curl CountPro</h1>
-<div style="justify-content: center; display: flex; margin-top: 30px;"><img src="{{ url_for('yoga') }}"></div>
-<button style="background-color : Red" onClick="changeFunction()"> Change</button>
-{% endblock %}
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 style="text-align: center;">Welcome to FitHub!</h1>
+  
+<p>Welcome to our exercise and yoga web app! We are thrilled to provide you with a platform that combines the benefits
+  of exercise and yoga to promote physical and mental well-being. Our app is designed to help you achieve your fitness
+  goals by providing you with personalized routines and real-time feedback on your form and alignment.
+
+  We understand that finding the time and resources to attend a fitness class or hire a personal trainer can be
+  challenging. That's why we created this app - to bring the convenience and accessibility of fitness and yoga to your
+  fingertips. Whether you're a beginner or an experienced practitioner, our app has something for everyone.
+
+  With a range of pre-recorded exercise and yoga classes, customizable routines, and real-time pose detection
+  technology, our app is designed to cater to your unique needs and preferences. You can track your progress, set
+  goals, and receive reminders to stay on track with your fitness journey.
+
+  We believe that fitness and yoga are not just about physical exercise, but also about mental and emotional
+  well-being. That's why our app provides you with a holistic approach to wellness that focuses on improving your
+  overall quality of life.
+
+  We hope you enjoy using our exercise and yoga web app and that it helps you achieve your fitness goals. Let's start
+  the journey towards a healthier and happier you!
+</p>
+
+  <!-- <div style="justify-content: center; display: flex; margin-top: 30px;"><img src="{{ url_for('yoga') }}"></div> -->
+  <!-- <button style="background-color : Red" onClick="changeFunction()"> Change</button> -->
+
+  {% endblock %}

@@ -398,22 +398,41 @@ def genTree():
 #             # Specify the label of the pose that is tree pose.
 #             label = 'Tree Pose'
 
+@app.route('/curl')
+ 
+def curl():
+    return render_template('curl.html')
 
-@app.route('/video')
-
-def video():
-    return Response(gen(),
-    mimetype='multipart/x-mixed-replace; boundary=frame')
-
-# @app.route('/yoga')
 @app.route('/yoga')
 
 def yoga():
-    return Response(generate_frames(),mimetype='multipart/x-mixed-replace; boundary=frame')
+    return render_template('yoga.html')
 
 
 @app.route('/tree')
-def tree():
+def tree(): 
+    return render_template('tree.html')
+
+@app.route('/about')
+def about(): 
+    return render_template('about.html') 
+
+
+#-----------------Video-Feed---------------------------------
+@app.route('/curl_video')
+
+def curl_video():
+    return Response(gen(),
+    mimetype='multipart/x-mixed-replace; boundary=frame')
+
+@app.route('/yoga_video')
+
+def yoga_video():
+    return Response(generate_frames(),mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
+@app.route('/tree_video') 
+def tree_video():
     return Response(genTree(),mimetype='multipart/x-mixed-replace; boundary=frame')
-                    
+#--------------------------------------------------------------
 app.run(debug=True)

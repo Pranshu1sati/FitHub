@@ -1,1 +1,0 @@
-cv2.imshow("Pose detection", img)
