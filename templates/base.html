@@ -1,32 +1,107 @@
-<!DOCTYPE html>
 <html>
+    <head>
+        
+        <script src="https://cdn.tailwindcss.com"></script>
+        <a href="https://www.flaticon.com/free-icons/yoga" title="yoga icons"></a>
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css">
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
 
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title></title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
 
-<body>
-    <h1 style="text-align: center;">Exercise and Yoga Trainer</h1>     
-    <nav>
-        <ul>
-            <li><a href="/">Home</a></li> 
-            <li><a href="/curl">Curl CountPro</a></li>
-            <li><a href="/yoga">Yoga Pose</a></li> 
-            <li><a href="/tree">Tree Pose</a></li>   
-            <li><a href="/about">About</a></li>
-        </ul>
-    </nav>
+            
+        </style>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/stylenav.css') }}">
+    </head>
+    <body>
+        <div class="hamburger">
+            <a href="#" onclick="openNav()">
+                <i class="px-4 pt-4 fas fa-bars c" align="left"></i>
+            </a>
+        
+    </div>
+            <div class="wrapper">
+                <div class="sidebar" id="p">
+                    <div class="section flex">
+                            <div class="hamburger">
+                                <a  onclick="myClose()">
+                                    <i class="px-3 fas fa-bars" align="left"></i>
+                                </a>
+                            
+                        </div>
+                        
+            
+                    </div>
+                        <!--<div align="right" class="cross" onclick="myClose()" onfocus="">
+                        <a href="#" class="cross" ><h2>X</h2></a></div>-->
+                        <br>
+                        <ul >
+                        <li>
+                            <a href="#" >
+                                <!--<i class="fas fa-home"></i>-->
+                                <img src="{{ url_for('static', filename='images/home.jpg') }}" width="35px" height="35px">
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <img src="{{ url_for('static', filename='images/exer.jpg') }}" width="35px" height="35px">
+                                <!--<span class="item">Exercise</span>-->
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <img src="{{ url_for('static', filename='images/yoga1.jpg') }}" width="35px" height="35px">
+                                <!--<span class="item">Yoga</span>-->
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <img src="{{ url_for('static', filename='images/about.jpg') }}" width="35px" height="35px">
+                                <!--<span class="item">About</span>-->
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <img src="{{ url_for('static', filename='images/creators.jpg') }}" width="35px" height="35px">
+                                <!--<span class="item">Creators</span>-->
+                            </a>
+                        </li>
+                    </ul>
+                    
+                </div>
+             <!--   
+               <nav class="text-white flex justify-between bg-black">
+            <ul class="mx-80 pl-35 py-4 flex space-x-28 text-xl font-serif">
+                <li class= "cursor-pointer hover:bg-slate-500" id="p1">Home</li>
+                <li class="cursor-pointer hover:bg-slate-500" id="p2">Exercise</li>
+                <li class= "cursor-pointer hover:bg-slate-500" id="p3">Yoga</li>
+                <li class=" cursor-pointer hover:bg-slate-500" id="p4">About</li>
+            </ul>
+            <div>
+                <a href="#" onclick="openNav()">
+                    <img src="https://randomuser.me/api/portraits/med/men/75.jpg" class=" h-12 w-12 px-1 py-1 rounded-full justify-end" >
+                </a>
+            </div>
+            
+        </nav>-->
+    </div>
     {% block content %}  
  
     {% endblock %}
-</body>
-
-<script src="{{ url_for('static', filename='js/script.js') }}" async defer></script>
-</body>
-
+       <script>
+             function openNav() {
+                
+                document.getElementById("p").style.width = "100px";
+              } 
+              function myClose() {
+                document.getElementById("p").style.width = "0px";
+              }
+              var hamburger = document.querySelector(".hamburger");
+	hamburger.addEventListener("click", function(){
+		document.querySelector("body").classList.toggle("active");
+	});
+            //h-12 w-12 px-1 py-1 
+            //px-28 py-4
+        </script>
+        
+    </body>
 </html>

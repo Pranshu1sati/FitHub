@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1 style = "text-align: center;">Tricep</h1>  
+ <div style="justify-content: center; display: flex; margin-top: 30px;">
+    <div class="demo" style="margin: auto 12rem auto 6rem">
+        <iframe src="https://giphy.com/embed/cJMZtP13i6nlhTip3V" width="480" height="270" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/workout-extensions-triceps-cJMZtP13i6nlhTip3V">via GIPHY</a></p>
+    </div>
+    <img src="{{url_for('tricep_video')}}" style="margin: auto 6rem auto 6rem">        
+</div>   
+  
+{% endblock %} 

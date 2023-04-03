@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <h1 style="text-align: center;">Exercise and Yoga Trainer</h1>     
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li> 
+            <li><a href="/curl">Curl CountPro</a></li>
+            <li><a href="/yoga">Yoga Pose</a></li> 
+            <li><a href="/tree">Tree Pose</a></li> 
+            <li><a href="/tricep">Tricep</a></li>  
+            <li><a href="/pushups">Pushups</a></li>
+            <li><a href="/about">About</a></li>
+        </ul>
+    </nav>
+    {% block content %}  
+ 
+    {% endblock %}
+
+
+<script src="{{ url_for('static', filename='js/script.js') }}" async defer></script>
+</body>
+
+</html>
