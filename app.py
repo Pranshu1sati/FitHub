@@ -3,7 +3,7 @@ import cv2
 from flask import Flask, render_template, Response
 import mediapipe as mp
 import numpy as np
-
+import math 
 def calculate_angle(a,b,c):
     a=np.array(a)
     b=np.array(b)
@@ -13,7 +13,34 @@ def calculate_angle(a,b,c):
     if angle>180.0:
         angle = 360-angle
     return angle
+def calculateAngle2(landmark1, landmark2, landmark3):
+    '''
+    This function calculates angle between three different landmarks.
+    Args:
+        landmark1: The first landmark containing the x,y and z coordinates.
+        landmark2: The second landmark containing the x,y and z coordinates.
+        landmark3: The third landmark containing the x,y and z coordinates.
+    Returns:
+        angle: The calculated angle between the three landmarks.
 
+    '''
+
+    # Get the required landmarks coordinates.
+    x1, y1, _ = landmark1
+    x2, y2, _ = landmark2
+    x3, y3, _ = landmark3
+
+    # Calculate the angle between the three points
+    angle = math.degrees(math.atan2(y3 - y2, x3 - x2) - math.atan2(y1 - y2, x1 - x2))
+    
+    # Check if the angle is less than zero.
+    if angle < 0:
+
+        # Add 360 to the found angle.
+        angle += 360
+    
+    # Return the calculated angle.
+    return angle
 
 app =Flask(__name__)
 
@@ -376,6 +403,152 @@ def Tricep():
             if key == 27:
                 break
 
+def Squat():
+    up_pos = None
+    down_pos = None
+    squat_pos = None
+    display_pos = None
+    squat_counter = 0
+    mp_draw = mp.solutions.drawing_utils
+    mp_pose = mp.solutions.pose
+    
+    pose = mp_pose.Pose(min_detection_confidence=0.7,min_tracking_confidence=0.5)
+    cap = cv2.VideoCapture(0)
+    while cap.isOpened():
+        ret,frames=cap.read()
+        image =cv2.cvtColor(cv2.flip(frames,1),cv2.COLOR_BGR2RGB)
+        frames = cv2.flip(frames,1)
+        
+        result = pose.process(image)
+        
+        if result.pose_landmarks:
+            landmarks = result.pose_landmarks.landmark
+            
+            Left_hip = [landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x,landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y]
+            Right_hip = [landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].y]
+            Left_knee = [landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].x,landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].y]
+            Right_knee = [landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].y]
+            Left_ankle = [landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].x,landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].y]
+            Right_ankle = [landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].y]
+            left_leg_angle = int(calculate_angle(Left_hip, Left_knee, Left_ankle))
+            right_leg_angle = int(calculate_angle(Right_hip, Right_knee, Right_ankle))
+
+            if left_leg_angle < 100 and right_leg_angle < 100:
+                down_pos = 'Down'
+                display_pos = 'Down'
+
+            if left_leg_angle > 160 and right_leg_angle > 160 and down_pos == 'Down':
+                squat_pos = 'Up'
+                display_pos = 'Up'
+                squat_counter += 1
+                down_pos = None
+                squat_pos = None
+
+            mp_draw.draw_landmarks(frames, result.pose_landmarks, mp_pose.POSE_CONNECTIONS)
+            cv2.putText(frames, str(squat_counter), (15, 12), 
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0), 1, cv2.LINE_AA)
+            frame = cv2.imencode('.jpg',frames)[1].tobytes()
+            yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+            key = cv2.waitKey(20)
+            if key == 27:
+                break
+        # cv2.imshow('Feed',cv2.cvtColor(image,cv2.COLOR_RGB2BGR))
+        # if cv2.waitKey(10) & 0xFF == ord('q'):
+        #     break
+
+def Warrior():
+
+    mp_draw = mp.solutions.drawing_utils
+    mp_pose = mp.solutions.pose
+    
+    pose = mp_pose.Pose(min_detection_confidence=0.7,min_tracking_confidence=0.5)
+    cap = cv2.VideoCapture(0)
+    label=""
+    while cap.isOpened():
+        ret,frames=cap.read()
+        image =cv2.cvtColor(cv2.flip(frames,1),cv2.COLOR_BGR2RGB)
+        frames = cv2.flip(frames,1)
+        
+        result = pose.process(image)
+        
+        if result.pose_landmarks:
+            landmarks = result.pose_landmarks.landmark
+            left_shoulder = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x,landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y]
+            left_elbow    = [landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].x,landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].y]
+            left_wrist = [landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x,landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y]
+            left_elbow_angle = calculate_angle(left_shoulder,left_elbow,left_wrist)
+            right_shoulder = [landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y]
+            right_elbow = [landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].y]
+            right_wrist = [landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].y]
+            right_elbow_angle = calculate_angle(right_shoulder,right_elbow,right_wrist)
+    #         left_elbow_angle = calculateAngle2(landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value],
+    #                                             landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value],
+    #                                             landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value])
+                
+    #             # Get the angle between the right shoulder, elbow and wrist points. 
+    #         right_elbow_angle = calculateAngle2(landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value],
+    #                                         landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value],
+    #                                         landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value])   
+            left_hip = [landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x,landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y]
+            right_hip = [landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].y]
+            left_shoulder_angle = calculate_angle(left_elbow, left_shoulder, left_hip)
+            right_shoulder_angle = calculate_angle(right_hip,right_shoulder,right_elbow)
+    #         # Get the angle between the left elbow, shoulder and hip points. 
+    #         left_shoulder_angle = calculateAngle2(landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value],
+    #                                             landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value],
+    #                                             landmarks[mp_pose.PoseLandmark.LEFT_HIP.value])
+
+    #         # Get the angle between the right hip, shoulder and elbow points. 
+    #         right_shoulder_angle = calculateAngle2(landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value],
+    #                                             landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value],
+    #                                             landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value])
+            left_knee=[landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].x,landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].y]
+            left_ankel=[landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].x,landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].y]
+            right_knee=[landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].y]
+            right_ankel=[landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].y]
+            left_knee_angle = calculate_angle(left_hip,left_knee,left_ankel)
+            right_knee_angle = calculate_angle(right_hip,right_knee,right_ankel)
+    #         # Get the angle between the left hip, knee and ankle points. 
+    #         left_knee_angle = calculateAngle2(landmarks[mp_pose.PoseLandmark.LEFT_HIP.value],
+    #                                         landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value],
+    #                                         landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value])
+    #         right_knee_angle = calculateAngle2(landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value],
+    #                                   landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value],
+    #                                   landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value])
+    #         if left_elbow_angle > 165 and left_elbow_angle < 195 and right_elbow_angle > 165 and right_elbow_angle < 195:
+
+    #     # Check if shoulders are at the required angle.
+            if left_shoulder_angle > 80 and left_shoulder_angle < 110 and right_shoulder_angle > 80 and right_shoulder_angle < 110:
+
+    # # Check if it is the warrior II pose.
+    # #----------------------------------------------------------------------------------------------------------------
+
+    #         # Check if one leg is straight.
+                    if left_knee_angle > 165 and left_knee_angle < 195 or right_knee_angle > 165 and right_knee_angle < 195:
+
+                # Check if the other leg is bended at the required angle.
+                        if left_knee_angle > 90 and left_knee_angle < 120 or right_knee_angle > 90 and right_knee_angle < 120:
+
+                    # Specify the label of the pose that is Warrior II pose.
+                            label = 'Warrior II Pose'
+                        else:
+                            label = "Bend Keen arms straight"
+
+
+
+            mp_draw.draw_landmarks(frames, result.pose_landmarks, mp_pose.POSE_CONNECTIONS)
+            cv2.putText(frames, label, (15, 12), 
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0), 1, cv2.LINE_AA)
+            frame = cv2.imencode('.jpg',frames)[1].tobytes()
+            yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+            key = cv2.waitKey(20)
+            if key == 27:
+                break
+        # cv2.imshow('Feed',cv2.cvtColor(image,cv2.COLOR_RGB2BGR))
+        # if cv2.waitKey(10) & 0xFF == ord('q'):
+        #     break
+
+
 @app.route('/curl')
  
 def curl():
@@ -400,6 +573,12 @@ def pushups():
 @app.route('/tricep')
 def tricep():
     return render_template('tricep.html')
+@app.route('/squat')
+def squat():
+    return render_template('Squat.html')
+@app.route('/warrior')
+def warrior():
+    return render_template("Warrior.html")
 
 #-----------------Video-Feed---------------------------------
 @app.route('/curl_video')
@@ -423,5 +602,12 @@ def pushups_video():
 @app.route('/tricep_video')
 def tricep_video():
     return Response(Tricep(),mimetype='multipart/x-mixed-replace; boundary=frame')
+@app.route('/squat_video')
+def squat_video():
+    return Response(Squat(),mimetype='multipart/x-mixed-replace; boundary=frame')
+@app.route('/warrior_video')
+def warrior_video():
+    return Response(Warrior(),mimetype='multipart/x-mixed-replace; boundary=frame')
 #--------------------------------------------------------------
 app.run(debug=True)
+

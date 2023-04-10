@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1 style = "text-align: center;">Tricep</h1>  
+ <div style="justify-content: center; display: flex; margin-top: 30px;">
+    <div class="demo" style="margin: auto 0rem auto 8rem">
+        <iframe src="{{ url_for('static', filename='images/gif-resized-pngs/squat.gif') }}" width="480" height="270" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
+    </div>
+    <img src="{{url_for('squat_video')}}" style="margin: auto 0rem auto 0rem">        
+</div>   
+  
+{% endblock %} 
